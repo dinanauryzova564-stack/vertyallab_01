@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7-сынып Биология | №1 Зертханалық жұмыс (Экожүйе)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0fdf4;
+      color: #0f172a;
+    }
+
+    /* Табиғат анимациялары */
+    @keyframes sway {
+      0%, 100% { transform: rotate(-1.5deg); }
+      50% { transform: rotate(1.5deg); }
+    }
+    .plant-sway {
+      transform-origin: bottom center;
+      animation: sway 3.5s ease-in-out infinite;
+    }
+
+    @keyframes butterflyFly {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(12px, -8px) scale(1.05); }
+      50% { transform: translate(24px, 2px) scale(0.95); }
+      75% { transform: translate(10px, 6px) scale(1.02); }
+    }
+    .butterfly-anim {
+      animation: butterflyFly 5s ease-in-out infinite;
+    }
+
+    @keyframes crawl {
+      0%, 100% { transform: translateX(0px); }
+      50% { transform: translateX(14px); }
+    }
+    .soil-bug {
+      animation: crawl 4s ease-in-out infinite;
+    }
+
+    /* Басып шығару (PDF / Print) режимдері */
+    @media print {
+      body {
+        background: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only-area {
+        display: block !important;
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+      .tab-content {
+        display: none !important;
+      }
+      #tab-report {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Хабарлама терезесі (Toast Notification) -->
+  <div id="toast-box" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 transition-all duration-300 no-print">
+    <span id="toast-icon" class="text-xl">🌿</span>
+    <p id="toast-message" class="text-sm font-medium"></p>
+  </div>
+
+  <!-- Жоғарғы тақырып және Оқушы деректері -->
+  <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-700 text-white shadow-lg no-print">
+    <div class="max-w-6xl mx-auto px-4 py-5">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase mb-2">
+            <span>🔬 7-сынып • Биология</span>
+            <span>•</span>
+            <span>Виртуалды зертхана</span>
+          </div>
+          <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
+            №1 зертханалық жұмыс. Жергілікті жердің экожүйесін зерттеу (мектеп ауласы мысалында)
+          </h1>
+          <p class="mt-2 text-emerald-100 text-sm sm:text-base max-w-3xl">
+            <strong class="text-white">Мақсаты:</strong> экожүйе құрамбөліктерін сипаттауды үйрену.
+          </p>
+        </div>
+
+        <!-- Орындалу барысы индикаторы -->
+        <div class="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-3.5 min-w-[240px]">
+          <div class="flex items-center justify-between text-xs font-semibold mb-1.5">
+            <span>Жұмыс барысы:</span>
+            <span id="progress-text" class="bg-white text-emerald-900 px-2 py-0.5 rounded-full font-bold">0 / 5 бөлім</span>
+          </div>
+          <div class="w-full bg-emerald-950/40 rounded-full h-2.5 overflow-hidden">
+            <div id="progress-bar" class="bg-amber-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <p class="text-[11px] text-emerald-100 mt-1.5">Барлық 6 қадамды орындап, хаттаманы толтырыңыз</p>
+        </div>
+      </div>
+
+      <!-- Оқушының аты-жөні мен сыныбы -->
+      <div class="mt-5 pt-4 border-t border-white/20 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label for="student-name" class="block text-xs font-semibold text-emerald-100 mb-1">Оқушының аты-жөні (Мұғалім тексеруі үшін) *</label>
+          <input type="text" id="student-name" placeholder="Мысалы: Сәрсенбаев Нұрлан"
+            class="w-full px-3.5 py-2 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm" />
+        </div>
+        <div>
+          <label for="student-class" class="block text-xs font-semibold text-emerald-100 mb-1">Сыныбы *</label>
+          <input type="text" id="student-class" placeholder="Мысалы: 7 «Б»"
+            class="w-full px-3.5 py-2 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm" />
+        </div>
+        <div class="flex items-end">
+          <div class="w-full bg-emerald-950/35 border border-white/20 rounded-xl px-3.5 py-2 text-xs text-emerald-100 flex items-center gap-2">
+            <span class="text-base">🧰</span>
+            <span><strong>Құрал-жабдықтар:</strong> сызғыш, лупа, ауа термометрі, үшкір таяқша.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Навигациялық қойындылар (Tabs) -->
+  <nav class="bg-white border-b border-emerald-200 sticky top-0 z-30 shadow-sm no-print">
+    <div class="max-w-6xl mx-auto px-4 overflow-x-auto">
+      <div class="flex space-x-1.5 py-2.5 min-w-max">
+        <button onclick="switchTab(1)" id="tab-btn-1"
+          class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all bg-emerald-600 text-white shadow-sm">
+          <span>🌡️ 1–2 қадам</span>
+          <span class="hidden sm:inline font-medium text-xs opacity-90">(Жансыз табиғат)</span>
+          <span id="badge-1" class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+        </button>
+
+        <button onclick="switchTab(2)" id="tab-btn-2"
+          class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+          <span>🌱 3-қадам</span>
+          <span class="hidden sm:inline font-medium text-xs opacity-90">(Жанды табиғат & Өлшеу)</span>
+          <span id="badge-2" class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+        </button>
+
+        <button onclick="switchTab(3)" id="tab-btn-3"
+          class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+          <span>🔍 4-қадам</span>
+          <span class="hidden sm:inline font-medium text-xs opacity-90">(Топырақты лупамен зерттеу)</span>
+          <span id="badge-3" class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+        </button>
+
+        <button onclick="switchTab(4)" id="tab-btn-4"
+          class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+          <span>🏡 5–6 қадам</span>
+          <span class="hidden sm:inline font-medium text-xs opacity-90">(Жасанды/Табиғи экожүйе)</span>
+          <span id="badge-4" class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+        </button>
+
+        <button onclick="switchTab(5)" id="tab-btn-5"
+          class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100">
+          <span>🎓 Қорытынды & Мұғалім тексерісі</span>
+          <span id="badge-5" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Негізгі мазмұн аймағы -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+
+    <!-- ==================== 1–2 ҚАДАМ: ЖАНСЫЗ ТАБИҒАТ ==================== -->
+    <section id="tab-1" class="tab-content space-y-6">
+      <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-emerald-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Жұмыс барысы: 1 және 2-тармақтар</span>
+            <h2 class="text-xl font-bold text-slate-900 mt-0.5">Үлескіні таңдау және жансыз (өлі) табиғат құрамбөліктерін сипаттау</h2>
+          </div>
+          <span id="step1-sim-status" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+            ⏳ Құралдар қолданылмаған
+          </span>
+        </div>
+
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl mb-6 text-sm text-slate-700 space-y-1">
+          <p class="font-semibold text-emerald-950">📖 Оқулықтағы нұсқаулық:</p>
+          <p><strong>1.</strong> Мектеп жанындағы аумақтан мүмкіндігінше бірдей табиғат үлескісін таңдап алыңдар.</p>
+          <p><strong>2.</strong> Осы экожүйедегі жансыз (өлі) табиғат құрамбөліктеріне жоспар бойынша сипаттама беріңдер: топырақ түсі, құрылымы (сазды немесе құмды), ауа райы, климаттық жағдайлар (температура, ылғалдылық, жауын-шашынның, шықтың түсуі), ауа жағдайы (ластануы, тозаңданғандығы).</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Виртуалды Мектеп ауласы стенді -->
+          <div class="lg:col-span-6 bg-slate-50 rounded-2xl p-4 border border-slate-200 flex flex-col items-center">
+            <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-3">
+              <span class="text-xs font-bold text-slate-600 uppercase">Мектеп ауласы үлескісі (1м × 1м)</span>
+              <div class="flex gap-1.5">
+                <button onclick="selectPlot('garden')" id="btn-plot-garden"
+                  class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-sm transition">
+                  🌳 Мектеп бағы (Ағашты)
+                </button>
+                <button onclick="selectPlot('meadow')" id="btn-plot-meadow"
+                  class="px-2.5 py-1 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 transition">
+                  🌾 Ашық алаңқай (Шөптесін)
+                </button>
+              </div>
+            </div>
+
+            <!-- SVG Мектеп ауласы көрінісі -->
+            <div class="relative w-full max-w-[380px] h-[290px] bg-sky-100 rounded-xl border border-slate-200 shadow-inner overflow-hidden">
+              <svg id="svg-plot1" viewBox="0 0 360 280" class="w-full h-full">
+                <!-- Аспан мен Күн -->
+                <defs>
+                  <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#bae6fd" />
+                    <stop offset="100%" stop-color="#f0f9ff" />
+                  </linearGradient>
+                </defs>
+                <rect x="0" y="0" width="360" height="190" fill="url(#skyGrad)" />
+                <circle cx="305" cy="42" r="22" fill="#fde047" stroke="#facc15" stroke-width="3" />
+                <!-- Бұлттар -->
+                <g fill="#ffffff" opacity="0.85">
+                  <circle cx="80" cy="45" r="14" /><circle cx="96" cy="42" r="17" /><circle cx="114" cy="46" r="13" />
+                </g>
+
+                <!-- Артқы фонда мектеп ғимаратының сұлбасы -->
+                <rect x="20" y="105" width="95" height="85" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5" />
+                <polygon points="15,105 67,75 120,105" fill="#94a3b8" />
+                <rect x="35" y="120" width="16" height="20" fill="#7dd3fc" />
+                <rect x="60" y="120" width="16" height="20" fill="#7dd3fc" />
+                <rect x="85" y="120" width="16" height="20" fill="#7dd3fc" />
+                <text x="67" y="165" text-anchor="middle" font-size="9" font-weight="bold" fill="#475569">МЕКТЕП</text>
+
+                <!-- Топырақ қабаты -->
+                <rect id="plot1-soil-bg" x="0" y="185" width="360" height="95" fill="#5c4033" />
+                <rect id="plot1-grass-top" x="0" y="182" width="360" height="10" fill="#22c55e" />
+
+                <!-- Ағаш (тек Мектеп бағы таңдалғанда көрінеді) -->
+                <g id="plot1-tree">
+                  <rect x="235" y="110" width="14" height="75" fill="#78350f" />
+                  <circle cx="242" cy="95" r="34" fill="#16a34a" />
+                  <circle cx="222" cy="108" r="24" fill="#15803d" />
+                  <circle cx="262" cy="108" r="24" fill="#22c55e" />
+                </g>
+
+                <!-- Шөптесін өсімдіктер -->
+                <g class="plant-sway">
+                  <path d="M140 185 Q135 155 128 145 M140 185 Q142 150 145 140 M140 185 Q148 160 154 150" stroke="#15803d" stroke-width="2.5" fill="none" />
+                  <circle cx="145" cy="138" r="5" fill="#facc15" />
+                </g>
+                <g class="plant-sway" style="animation-delay: 0.8s;">
+                  <path d="M185 185 Q180 165 175 158 M185 185 Q190 165 195 158" stroke="#16a34a" stroke-width="2" fill="none" />
+                </g>
+
+                <!-- Үлескі шекарасы (1м х 1м қазықтар) -->
+                <line x1="115" y1="185" x2="115" y2="215" stroke="#ef4444" stroke-width="2.5" />
+                <line x1="295" y1="185" x2="295" y2="215" stroke="#ef4444" stroke-width="2.5" />
+                <line x1="115" y1="195" x2="295" y2="195" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3" />
+                <text x="205" y="210" text-anchor="middle" font-size="10" font-weight="bold" fill="#fef08a">Таңдалған үлескі (1м × 1м)</text>
+
+                <!-- Ауа термометрі (Құрал) -->
+                <g id="tool-thermometer" transform="translate(312, 95)" opacity="0.35" style="transition: all 0.5s;">
+                  <rect x="0" y="0" width="36" height="115" rx="8" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+                  <rect x="15" y="14" width="6" height="75" rx="3" fill="#e2e8f0" />
+                  <circle cx="18" cy="94" r="7" fill="#ef4444" />
+                  <rect id="therm-mercury" x="16.5" y="45" width="3" height="45" fill="#ef4444" />
+                  <text id="therm-val" x="18" y="109" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#0f172a">+19°C</text>
+                </g>
+
+                <!-- Топырақ сынамасы индикаторы -->
+                <g id="tool-soil-probe" opacity="0" style="transition: opacity 0.5s;">
+                  <rect x="130" y="220" width="155" height="46" rx="8" fill="#1e293b" fill-opacity="0.9" stroke="#94a3b8" />
+                  <text id="soil-probe-text1" x="207" y="238" text-anchor="middle" font-size="10" font-weight="bold" fill="#fde047">Топырақ: Қара-қоңыр</text>
+                  <text id="soil-probe-text2" x="207" y="254" text-anchor="middle" font-size="9.5" fill="#e2e8f0">Құрылымы: Саздақ, ылғалды</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Құралдарды іске қосу батырмалары -->
+            <div class="mt-4 flex flex-wrap justify-center gap-2 w-full">
+              <button onclick="measureAirTemp()" id="btn-meas-temp"
+                class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition flex items-center gap-1.5">
+                <span>🌡️ Ауа термометрін қолдану</span>
+              </button>
+              <button onclick="inspectSoilType()" id="btn-meas-soil"
+                class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition flex items-center gap-1.5">
+                <span>🧪 Топырақ құрылымын анықтау</span>
+              </button>
+            </div>
+
+            <!-- Өлшенген абиотикалық деректер карточкасы -->
+            <div id="abiotic-readout" class="hidden w-full mt-3 bg-white rounded-xl border border-emerald-200 p-3 text-xs space-y-1">
+              <p class="font-bold text-emerald-800">📋 Аспаптар көрсеткіші:</p>
+              <div class="grid grid-cols-2 gap-2 text-slate-700">
+                <div>• <strong>Температура:</strong> <span id="read-temp">—</span></div>
+                <div>• <strong>Ылғалдылық:</strong> <span id="read-hum">—</span></div>
+                <div>• <strong>Топырақ түсі:</strong> <span id="read-soil-color">—</span></div>
+                <div>• <strong>Құрылымы:</strong> <span id="read-soil-struct">—</span></div>
+                <div class="col-span-2">• <strong>Ауа жағдайы:</strong> <span id="read-air-qual">Таза, шаң-тозаң аз (мектеп бағы аймағы)</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Бақылау сұрақтары (2-тармақ бойынша) -->
+          <div class="lg:col-span-6 space-y-4">
+            <h3 class="font-bold text-slate-800 text-base">✍️ Жансыз (абиотикалық) табиғат құрамбөліктерін сипаттаңыз:</h3>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">1. Жансыз (өлі) табиғат факторлары ғылымда қалай аталады және оған не жатады?</label>
+              <select id="q1-1" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <option value="">-- Дұрыс жауапты таңдаңыз --</option>
+                <option value="abiotic">Абиотикалық факторлар: топырақ құрамы, ауа температурасы, ылғалдылық, жарық, жауын-шашын, ауа тазалығы</option>
+                <option value="biotic">Биотикалық факторлар: өсімдіктер, жануарлар мен саңырауқұлақтар</option>
+                <option value="anthropogenic">Тек адам салған ғимараттар мен жолдар</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">2. Таңдалған үлескідегі топырақтың түсі мен құрылымы қандай?</label>
+              <select id="q1-2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <option value="">-- Өлшеу нәтижесі бойынша таңдаңыз --</option>
+                <option value="loam_humus">Қара-қоңыр түсті, қарашірікке бай саздақ/құмайт топырақ; ылғалды жақсы сақтайды</option>
+                <option value="pure_ice">Таза мұз қабатынан тұрады</option>
+                <option value="metal">Темір және пластик қабаты</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">3. Жоспар бойынша жансыз табиғатқа өз сипаттамаңызды жазыңыз:</label>
+              <textarea id="q1-text" rows="3"
+                placeholder="Мысалы: Таңдалған мектеп ауласы үлескісінде ауа температурасы +19°C, ауа райы ашық, топырағы қара-қоңыр түсті саздақ, ауасы таза, тозаңдану төмен..."
+                class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between gap-3">
+              <button onclick="saveStep1()"
+                class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition">
+                ✔ 1–2 қадам нәтижесін сақтау
+              </button>
+              <span id="q1-feedback" class="text-xs font-bold"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3-ҚАДАМ: ЖАНДЫ ТАБИҒАТ ЖӘНЕ ӨЛШЕУ ==================== -->
+    <section id="tab-2" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-emerald-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Жұмыс барысы: 3-тармақ</span>
+            <h2 class="text-xl font-bold text-slate-900 mt-0.5">Жанды (тірі) табиғат құрамбөліктерін санау және биіктігін өлшеу</h2>
+          </div>
+          <span id="step2-sim-status" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+            ⏳ Өсімдіктер өлшенбеген
+          </span>
+        </div>
+
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl mb-6 text-sm text-slate-700">
+          <p class="font-semibold text-emerald-950 mb-1">📖 Оқулықтағы нұсқаулық:</p>
+          <p><strong>3.</strong> «Бұл экожүйедегі жанды (тірі) табиғат құрамбөліктерін қараңдар, оларды сипаттаңдар. Өсімдіктің қанша түрін санадыңдар? Сендерге таныс түр бар ма? Мұғалім өсімдіктің қандай түрімен таныстырды? Экожүйедегі орташа, ең биік және ең аласа шөптесін өсімдіктерді табыңдар. Қандай жануарларды көрдіңдер?»</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Виртуалды Сызғыш және Өсімдіктер/Жануарлар стенді -->
+          <div class="lg:col-span-6 bg-slate-50 rounded-2xl p-4 border border-slate-200 flex flex-col items-center">
+            <div class="w-full flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-600 uppercase">Өсімдіктер мен жануарларды зерттеу</span>
+              <span class="text-xs font-bold bg-amber-100 text-amber-900 px-2.5 py-1 rounded-lg">📏 Құрал: Сызғыш (см)</span>
+            </div>
+
+            <div class="relative w-full max-w-[380px] h-[300px] bg-gradient-to-b from-sky-50 to-emerald-50 rounded-xl border border-slate-200 shadow-inner overflow-hidden">
+              <svg viewBox="0 0 360 290" class="w-full h-full">
+                <!-- Топырақ -->
+                <rect x="0" y="245" width="360" height="45" fill="#5c4033" />
+                <rect x="0" y="242" width="360" height="6" fill="#16a34a" />
+
+                <!-- Сызғыш сол жақта (0 - 60 см) -->
+                <g transform="translate(14, 30)">
+                  <rect x="0" y="0" width="28" height="215" rx="3" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5" />
+                  <text x="14" y="13" text-anchor="middle" font-size="8" font-weight="bold" fill="#854d0e">см</text>
+                  <!-- Шкалалар -->
+                  <line x1="18" y1="25" x2="28" y2="25" stroke="#854d0e" stroke-width="1.2" /><text x="15" y="28" text-anchor="end" font-size="7.5" fill="#854d0e">60</text>
+                  <line x1="18" y1="60" x2="28" y2="60" stroke="#854d0e" stroke-width="1.2" /><text x="15" y="63" text-anchor="end" font-size="7.5" fill="#854d0e">50</text>
+                  <line x1="18" y1="95" x2="28" y2="95" stroke="#854d0e" stroke-width="1.2" /><text x="15" y="98" text-anchor="end" font-size="7.5" fill="#854d0e">40</text>
+                  <line x1="18" y1="130" x2="28" y2="130" stroke="#854d0e" stroke-width="1.2" /><text x="15" y="133" text-anchor="end" font-size="7.5" fill="#854d0e">30</text>
+                  <line x1="18" y1="165" x2="28" y2="165" stroke="#854d0e" stroke-width="1.2" /><text x="15" y="168" text-anchor="end" font-size="7.5" fill="#854d0e">20</text>
+                  <line x1="18" y1="195" x2="28" y2="195" stroke="#854d0e" stroke-width="1.2" /><text x="15" y="198" text-anchor="end" font-size="7.5" fill="#854d0e">10</text>
+                  <line x1="18" y1="212" x2="28" y2="212" stroke="#854d0e" stroke-width="1.2" /><text x="15" y="214" text-anchor="end" font-size="7.5" fill="#854d0e">0</text>
+                </g>
+
+                <!-- 1. Ең аласа өсімдік: Беде (8 см) -->
+                <g class="plant-sway" transform="translate(80, 242)">
+                  <path d="M0 0 L0 -26" stroke="#15803d" stroke-width="2.5" />
+                  <circle cx="-5" cy="-26" r="5" fill="#22c55e" />
+                  <circle cx="5" cy="-26" r="5" fill="#22c55e" />
+                  <circle cx="0" cy="-31" r="5" fill="#4ade80" />
+                  <text x="0" y="16" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#fef08a">1. Беде</text>
+                </g>
+
+                <!-- 2. Аласа-орташа: Бақбақ (18 см) -->
+                <g class="plant-sway" style="animation-delay: 0.4s;" transform="translate(145, 242)">
+                  <path d="M0 0 L0 -58" stroke="#16a34a" stroke-width="3" />
+                  <path d="M0 -10 L-14 -25 L-4 -18 Z" fill="#15803d" />
+                  <path d="M0 -10 L14 -25 L4 -18 Z" fill="#15803d" />
+                  <circle cx="0" cy="-62" r="10" fill="#facc15" />
+                  <text x="0" y="16" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#fef08a">2. Бақбақ</text>
+                </g>
+
+                <!-- 3. Орташа өсімдік: Жолжелкен (28 см) -->
+                <g class="plant-sway" style="animation-delay: 0.7s;" transform="translate(215, 242)">
+                  <path d="M0 0 L0 -92" stroke="#15803d" stroke-width="2.5" />
+                  <ellipse cx="-11" cy="-22" rx="7" ry="16" transform="rotate(-20 -11 -22)" fill="#22c55e" />
+                  <ellipse cx="11" cy="-22" rx="7" ry="16" transform="rotate(20 11 -22)" fill="#22c55e" />
+                  <rect x="-2.5" y="-95" width="5" height="32" rx="2.5" fill="#84cc16" />
+                  <text x="0" y="16" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#fef08a">3. Жолжелкен</text>
+                </g>
+
+                <!-- 4. Ең биік шөптесін өсімдік: Жусан / Қоңырбас (52 см) -->
+                <g class="plant-sway" style="animation-delay: 1s;" transform="translate(290, 242)">
+                  <path d="M0 0 L0 -175" stroke="#4d7c0f" stroke-width="3" />
+                  <path d="M0 -40 L-14 -65 M0 -75 L15 -100 M0 -110 L-13 -138 M0 -140 L12 -165" stroke="#65a30d" stroke-width="2.2" />
+                  <circle cx="0" cy="-178" r="4" fill="#a3e635" />
+                  <text x="0" y="16" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#fef08a">4. Жусан</text>
+                </g>
+
+                <!-- Өлшеу сызықтары (Сызғыш басқанда шығады) -->
+                <g id="ruler-lines" opacity="0" style="transition: opacity 0.6s;">
+                  <line x1="42" y1="212" x2="80" y2="212" stroke="#dc2626" stroke-dasharray="3,2" />
+                  <text x="84" y="208" font-size="8.5" font-weight="bold" fill="#dc2626">8 см (Ең аласа)</text>
+
+                  <line x1="42" y1="180" x2="145" y2="180" stroke="#dc2626" stroke-dasharray="3,2" />
+                  <text x="148" y="176" font-size="8.5" font-weight="bold" fill="#dc2626">18 см</text>
+
+                  <line x1="42" y1="148" x2="215" y2="148" stroke="#dc2626" stroke-dasharray="3,2" />
+                  <text x="218" y="144" font-size="8.5" font-weight="bold" fill="#dc2626">28 см (Орташа)</text>
+
+                  <line x1="42" y1="65" x2="290" y2="65" stroke="#dc2626" stroke-dasharray="3,2" />
+                  <text x="235" y="58" font-size="8.5" font-weight="bold" fill="#dc2626">52 см (Ең биік)</text>
+                </g>
+
+                <!-- Жануарлар (Көбелек, Қанқыз, Құмырсқа) -->
+                <g id="animals-group" opacity="0.25" style="transition: opacity 0.6s;">
+                  <!-- Көбелек -->
+                  <g class="butterfly-anim" transform="translate(160, 85)">
+                    <ellipse cx="-5" cy="0" rx="6" ry="4" fill="#f97316" />
+                    <ellipse cx="5" cy="0" rx="6" ry="4" fill="#f97316" />
+                    <line x1="0" y1="-4" x2="0" y2="4" stroke="#0f172a" stroke-width="1.5" />
+                    <text x="0" y="-9" text-anchor="middle" font-size="8" font-weight="bold" fill="#9a3412">Көбелек</text>
+                  </g>
+                  <!-- Қанқыз -->
+                  <g transform="translate(215, 218)">
+                    <circle cx="0" cy="0" r="4.5" fill="#ef4444" />
+                    <circle cx="-1.5" cy="-1" r="1" fill="#000" /><circle cx="1.5" cy="1" r="1" fill="#000" />
+                    <text x="22" y="3" font-size="8" font-weight="bold" fill="#991b1b">Қанқыз</text>
+                  </g>
+                  <!-- Құмырсқа -->
+                  <g class="soil-bug" transform="translate(105, 240)">
+                    <circle cx="0" cy="0" r="2" fill="#1e293b" /><circle cx="3.5" cy="0" r="2" fill="#1e293b" /><circle cx="7" cy="0" r="2" fill="#1e293b" />
+                    <text x="4" y="-6" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#1e293b">Құмырсқа</text>
+                  </g>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Батырмалар -->
+            <div class="mt-4 flex flex-wrap justify-center gap-2 w-full">
+              <button onclick="measurePlantsWithRuler()" id="btn-use-ruler"
+                class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs sm:text-sm font-bold shadow-sm transition">
+                📏 1. Сызғышпен өсімдік биіктігін өлшеу
+              </button>
+              <button onclick="observeAnimals()" id="btn-obs-animals"
+                class="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs sm:text-sm font-bold shadow-sm transition">
+                🦋 2. Жануарларды бақылау
+              </button>
+            </div>
+            <p id="step2-hint" class="mt-2.5 text-xs text-center text-slate-600 font-medium min-h-[18px]"></p>
+          </div>
+
+          <!-- Бақылау сұрақтары -->
+          <div class="lg:col-span-6 space-y-4">
+            <h3 class="font-bold text-slate-800 text-base">✍️ Жанды (биотикалық) құрамбөліктер бойынша сұрақтар:</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Саналған өсімдік түрі саны:</label>
+                <select id="q2-count" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm">
+                  <option value="">-- Таңдаңыз --</option>
+                  <option value="4">4 түр (Беде, Бақбақ, Жолжелкен, Жусан)</option>
+                  <option value="1">Тек 1 түр бар</option>
+                  <option value="0">Өсімдік мүлде жоқ</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Ең биік / орташа / ең аласа өсімдік:</label>
+                <select id="q2-heights" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm">
+                  <option value="">-- Таңдаңыз --</option>
+                  <option value="correct">Ең биік: Жусан (52 см), Орташа: Жолжелкен (28 см), Ең аласа: Беде (8 см)</option>
+                  <option value="wrong">Ең биік: Беде (8 см), Ең аласа: Жусан (52 см)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Қандай жануарлар кездесті және олардың экожүйедегі рөлі қандай?</label>
+              <select id="q2-animals" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm mb-2">
+                <option value="">-- Таңдаңыз --</option>
+                <option value="consumers">Көбелек (тозаңдандырушы), қанқыз (бітелермен қоректенетін жыртқыш), құмырсқа — барлығы тұтынушылар (консументтер)</option>
+                <option value="producers">Олар фотосинтез жасайтын өндірушілер</option>
+              </select>
+              <textarea id="q2-text" rows="2"
+                placeholder="Өз бақылауыңызды жазыңыз (таныс өсімдіктер, жануарлар туралы)..."
+                class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between gap-3">
+              <button onclick="saveStep2()"
+                class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition">
+                ✔ 3-қадам нәтижесін сақтау
+              </button>
+              <span id="q2-feedback" class="text-xs font-bold"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4-ҚАДАМ: ТОПЫРАҚТЫ ЛУПАМЕН ЗЕРТТЕУ ==================== -->
+    <section id="tab-3" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-emerald-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Жұмыс барысы: 4-тармақ</span>
+            <h2 class="text-xl font-bold text-slate-900 mt-0.5">Топырақ беті мен ішкі қабатын лупа және үшкір таяқшамен зерттеу</h2>
+          </div>
+          <span id="step3-sim-status" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+            ⏳ Топырақ зерттелмеген
+          </span>
+        </div>
+
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl mb-6 text-sm text-slate-700">
+          <p class="font-semibold text-emerald-950 mb-1">📖 Оқулықтағы нұсқаулық:</p>
+          <p><strong>4.</strong> «Лупа арқылы топырақтың бетін қараңдар. Үшкір таяқшамен топырақтың бетін қазып көріңдер. Содан кейін топырақты тағы лупа арқылы қараңдар. Не байқадыңдар? Сипаттама беріңдер.»</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Виртуалды Лупа және Үшкір таяқша стенді -->
+          <div class="lg:col-span-6 bg-slate-50 rounded-2xl p-4 border border-slate-200 flex flex-col items-center">
+            <div class="w-full flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-600 uppercase">Лупа (10× үлкейту) көрінісі</span>
+              <span id="soil-layer-badge" class="text-xs font-bold bg-amber-100 text-amber-900 px-2.5 py-1 rounded-lg">
+                Қабат: Топырақ беті
+              </span>
+            </div>
+
+            <!-- Үлкейтілген Лупа шеңбері (SVG) -->
+            <div class="relative w-full max-w-[360px] h-[290px] bg-slate-800 rounded-xl border border-slate-300 shadow-inner flex items-center justify-center overflow-hidden">
+              <svg viewBox="0 0 320 270" class="w-full h-full">
+                <defs>
+                  <clipPath id="lensClip">
+                    <circle cx="150" cy="130" r="105" />
+                  </clipPath>
+                </defs>
+
+                <!-- Лупа сабы -->
+                <line x1="225" y1="205" x2="295" y2="260" stroke="#475569" stroke-width="18" stroke-linecap="round" />
+                <line x1="225" y1="205" x2="295" y2="260" stroke="#94a3b8" stroke-width="10" stroke-linecap="round" />
+
+                <!-- Лупа ішіндегі көрініс -->
+                <g clip-path="url(#lensClip)">
+                  <!-- 1-КҮЙ: ТОПЫРАҚ БЕТІ -->
+                  <g id="lens-surface-view">
+                    <rect x="40" y="20" width="220" height="220" fill="#6b4423" />
+                    <!-- Құрғақ жапырақтар, шөп қалдықтары, қиыршық тастар -->
+                    <ellipse cx="105" cy="90" rx="18" ry="8" transform="rotate(25 105 90)" fill="#a16207" />
+                    <ellipse cx="185" cy="145" rx="22" ry="9" transform="rotate(-15 185 145)" fill="#854d0e" />
+                    <path d="M90 165 L145 150" stroke="#ca8a04" stroke-width="4" stroke-linecap="round" />
+                    <circle cx="150" cy="100" r="7" fill="#9ca3af" />
+                    <circle cx="125" cy="135" r="5" fill="#d1d5db" />
+                    <circle cx="190" cy="95" r="6" fill="#9ca3af" />
+                    <!-- Құмырсқа -->
+                    <g class="soil-bug" transform="translate(135, 118)">
+                      <circle cx="0" cy="0" r="3" fill="#0f172a" />
+                      <circle cx="5" cy="0" r="3" fill="#0f172a" />
+                      <circle cx="10" cy="0" r="3.5" fill="#0f172a" />
+                    </g>
+                    <text x="150" y="210" text-anchor="middle" font-size="11" font-weight="bold" fill="#fef08a">
+                      Беткі қабат: қураған жапырақ, құм, құмырсқа
+                    </text>
+                  </g>
+
+                  <!-- 2-КҮЙ: ҮШКІР ТАЯҚШАМЕН ҚАЗЫЛҒАН ІШКІ ҚАБАТ -->
+                  <g id="lens-dug-view" opacity="0" style="transition: opacity 0.7s;">
+                    <rect x="40" y="20" width="220" height="220" fill="#3e2723" />
+                    <!-- Қарашірік түйіршіктері, ылғал тамшылары -->
+                    <circle cx="95" cy="85" r="9" fill="#271815" />
+                    <circle cx="175" cy="80" r="11" fill="#271815" />
+                    <circle cx="120" cy="175" r="10" fill="#271815" />
+                    <!-- Өсімдік тамырлары -->
+                    <path d="M70 50 Q115 95 145 155 T195 215" fill="none" stroke="#fde68a" stroke-width="3" />
+                    <path d="M115 95 Q100 130 85 150" fill="none" stroke="#fde68a" stroke-width="1.8" />
+                    <path d="M145 155 Q175 165 205 160" fill="none" stroke="#fde68a" stroke-width="1.8" />
+                    <!-- Жауын құрты -->
+                    <path d="M125 120 Q145 108 165 122 T200 118" fill="none" stroke="#f472b6" stroke-width="7" stroke-linecap="round" />
+                    <text x="162" y="106" text-anchor="middle" font-size="9" font-weight="bold" fill="#fbcfe8">Жауын құрты</text>
+                    <!-- Зең саңырауқұлақ жіпшелері -->
+                    <path d="M85 170 L105 165 M95 160 L98 178" stroke="#e2e8f0" stroke-width="1.5" />
+                    <text x="150" y="210" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#6ee7b7">
+                      Ішкі қабат: ылғалды қарашірік, тамыр, жауын құрты
+                    </text>
+                  </g>
+                </g>
+
+                <!-- Лупа жиегі -->
+                <circle cx="150" cy="130" r="105" fill="none" stroke="#cbd5e1" stroke-width="8" />
+                <circle cx="150" cy="130" r="109" fill="none" stroke="#475569" stroke-width="2" />
+              </svg>
+            </div>
+
+            <!-- Басқару батырмалары -->
+            <div class="mt-4 flex flex-wrap justify-center gap-2 w-full">
+              <button onclick="inspectSoilSurface()" id="btn-soil-surf"
+                class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
+                🔍 1. Топырақ бетін лупамен қарау
+              </button>
+              <button onclick="digAndInspectSoil()" id="btn-soil-dig"
+                class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
+                🥢 2. Үшкір таяқшамен қазып, лупамен қарау
+              </button>
+            </div>
+            <p id="step3-hint" class="mt-2.5 text-xs text-center text-slate-600 font-medium min-h-[18px]"></p>
+          </div>
+
+          <!-- Бақылау сұрақтары -->
+          <div class="lg:col-span-6 space-y-4">
+            <h3 class="font-bold text-slate-800 text-base">✍️ Топырақты зерттеу нәтижелерін сипаттаңыз:</h3>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">1. Лупа арқылы топырақтың бетінен не байқадыңдар?</label>
+              <select id="q3-1" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm">
+                <option value="">-- Таңдаңыз --</option>
+                <option value="surface_ok">Құрғақ топырақ түйіршіктері, қураған жапырақ пен шөп қалдықтары, ұсақ тастар және құмырсқалар байқалды</option>
+                <option value="fish">Тек балықтар мен балдырлар байқалды</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">2. Үшкір таяқшамен топырақты қазып, лупамен қарағанда қандай айырмашылық болды?</label>
+              <select id="q3-2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm">
+                <option value="">-- Таңдаңыз --</option>
+                <option value="dug_ok">Ішкі қабаты ылғалдырақ әрі қара-қоңыр (қарашірікке бай); онда өсімдік тамырлары, жауын құрты және ыдыратушы микроағзалар (редуценттер) тіршілік ететіні анықталды</option>
+                <option value="no_diff">Топырақ беті мен ішінде ешқандай тіршілік иесі жоқ</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">3. Сипаттама жазыңыз (жауын құрты мен микроағзалардың маңызы):</label>
+              <textarea id="q3-text" rows="3"
+                placeholder="Мысалы: Қазылған топырақ ылғалды, қарашірігі мол. Жауын құрттары топырақты қопсытып, ауа мен судың өтуін жақсартады..."
+                class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between gap-3">
+              <button onclick="saveStep3()"
+                class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition">
+                ✔ 4-қадам нәтижесін сақтау
+              </button>
+              <span id="q3-feedback" class="text-xs font-bold"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5–6 ҚАДАМ: ЖАСАНДЫ ЖӘНЕ ТАБИҒИ ЭКОЖҮЙЕ ==================== -->
+    <section id="tab-4" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-emerald-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Жұмыс барысы: 5 және 6-тармақтар</span>
+            <h2 class="text-xl font-bold text-slate-900 mt-0.5">Жасанды құрамбөліктер және экожүйе компоненттерінің өзара байланысы</h2>
+          </div>
+          <span id="step4-sim-status" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+            ⏳ Модель тексерілмеген
+          </span>
+        </div>
+
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl mb-6 text-sm text-slate-700 space-y-1">
+          <p class="font-semibold text-emerald-950">📖 Оқулықтағы нұсқаулық:</p>
+          <p><strong>5.</strong> Сипатталған экожүйеде жасанды құрамбөліктер бар ма? Ол суарыла ма? Ол жердің топырағын тыңайтқыштармен тыңайта ма? Мәдени өсімдіктер өсіріле ме?</p>
+          <p><strong>6.</strong> Сендер қарастырған экожүйе табиғи ма, әлде жасанды ма? Анықтаңдар. Экожүйе құрамбөліктерінің өзара байланысы туралы қорытынды жасаңдар. Олардың барлығы қажет пе? Экожүйе құрамбөліктерінің біреуінің жойылуы қандай өзгерістер туғызуы мүмкін?</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Интерактивті Экожүйе байланыс моделі -->
+          <div class="lg:col-span-6 bg-slate-50 rounded-2xl p-4 border border-slate-200 flex flex-col items-center">
+            <div class="w-full flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-600 uppercase">Экожүйе тепе-теңдік симуляторы</span>
+              <span class="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">Құрамбөлікті өшіріп көріңіз</span>
+            </div>
+
+            <div class="w-full bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+              <p class="text-xs text-slate-600">Төмендегі батырмаларды басып, экожүйеден бір құрамбөлік жойылса не болатынын бақылаңыз:</p>
+
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="simulateRemoval('plants')" class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-left transition">
+                  <span class="font-bold text-xs text-emerald-900 block">🌿 Өсімдіктер (Өндірушілер)</span>
+                  <span class="text-[11px] text-emerald-700">Жойылса не болады?</span>
+                </button>
+                <button onclick="simulateRemoval('insects')" class="p-2.5 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-left transition">
+                  <span class="font-bold text-xs text-amber-900 block">🐝 Жәндіктер (Тозаңдандырушы)</span>
+                  <span class="text-[11px] text-amber-700">Жойылса не болады?</span>
+                </button>
+                <button onclick="simulateRemoval('worms')" class="p-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-left transition">
+                  <span class="font-bold text-xs text-rose-900 block">🪱 Жауын құрты / Бактерия</span>
+                  <span class="text-[11px] text-rose-700">Жойылса не болады?</span>
+                </button>
+                <button onclick="simulateRemoval('water')" class="p-2.5 rounded-xl border border-sky-200 bg-sky-50 hover:bg-sky-100 text-left transition">
+                  <span class="font-bold text-xs text-sky-900 block">💧 Суару / Ылғал (Абиотикалық)</span>
+                  <span class="text-[11px] text-sky-700">Тоқтаса не болады?</span>
+                </button>
+              </div>
+
+              <!-- Нәтиже экраны -->
+              <div id="eco-impact-box" class="bg-slate-900 text-white rounded-xl p-3.5 text-xs min-h-[95px] flex flex-col justify-center">
+                <p class="text-emerald-300 font-bold mb-1">✅ Қазіргі күйі: Экожүйе тепе-теңдікте</p>
+                <p class="text-slate-300">Мектеп ауласы — адам қолымен күтіп-бапталатын (суарылатын, көшет егілетін) <strong>жасанды (антропогендік) экожүйе</strong>. Мұнда барлық құрамбөліктер біртұтас жүйе құрайды.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5–6 қадам сұрақтары -->
+          <div class="lg:col-span-6 space-y-4">
+            <h3 class="font-bold text-slate-800 text-base">✍️ 5 және 6-тармақ сұрақтарына жауап беріңіз:</h3>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">1. Мектеп ауласы қандай экожүйеге жатады және онда қандай жасанды құрамбөліктер бар?</label>
+              <select id="q4-1" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm">
+                <option value="">-- Таңдаңыз --</option>
+                <option value="artificial">Жасанды (антропогендік) экожүйе: адамдар суарады, тыңайтқыш береді, мәдени өсімдіктер (гүлдер, сәндік ағаштар) өсіреді, қоршаулар мен жолдар бар</option>
+                <option value="wild_ocean">Адам аяғы баспаған табиғи мұхит экожүйесі</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">2. Экожүйе құрамбөліктерінің біреуінің жойылуы неге әкеледі?</label>
+              <select id="q4-2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-sm mb-2">
+                <option value="">-- Таңдаңыз --</option>
+                <option value="chain_reaction">Барлық құрамбөліктер өзара тығыз байланысты; біреуі жойылса қоректік тізбек үзіліп, экожүйенің тепе-теңдігі бұзылады</option>
+                <option value="nothing">Ешқандай өзгеріс болмайды</option>
+              </select>
+              <textarea id="q4-text" rows="2"
+                placeholder="Өз ойыңызды жазыңыз (мысалы: мектеп ауласындағы гүлдер мен ағаштар суарылып, тыңайтылады...)"
+                class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between gap-3">
+              <button onclick="saveStep4()"
+                class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition">
+                ✔ 5–6 қадам нәтижесін сақтау
+              </button>
+              <span id="q4-feedback" class="text-xs font-bold"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5-БӨЛІМ: ҚОРЫТЫНДЫ ЖӘНЕ МҰҒАЛІМ ТЕКСЕРІСІ ==================== -->
+    <section id="tab-report" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-slate-200 print-only-area">
+        <!-- Хаттама тақырыбы -->
+        <div class="border-b-2 border-slate-800 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-emerald-700">Биология пәні • 7-сынып • Зертханалық жұмыс хаттамасы</p>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+              №1 зертханалық жұмыс: Жергілікті жердің экожүйесін зерттеу (мектеп ауласы мысалында)
+            </h2>
+          </div>
+          <div class="text-left sm:text-right text-xs text-slate-600 bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200">
+            <p><strong>Оқушы:</strong> <span id="rep-student-name" class="text-slate-900 font-bold">Көрсетілмеген</span></p>
+            <p><strong>Сыныбы:</strong> <span id="rep-student-class" class="text-slate-900 font-bold">Көрсетілмеген</span></p>
+            <p><strong>Күні:</strong> <span id="rep-date"></span></p>
+          </div>
+        </div>
+
+        <!-- Жиынтық кесте -->
+        <div class="mb-6">
+          <h3 class="font-bold text-slate-800 text-base mb-3">📊 Экожүйені зерттеу нәтижелерінің жиынтық кестесі</h3>
+          <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-emerald-50 text-emerald-950 border-b border-slate-200">
+                  <th class="p-3 font-bold">Зерттеу кезеңі</th>
+                  <th class="p-3 font-bold">Анықталған экожүйе сипаттамасы</th>
+                  <th class="p-3 font-bold text-center">Симуляция</th>
+                  <th class="p-3 font-bold text-center">Ұпай</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr>
+                  <td class="p-3 font-semibold">1–2 қадам: Жансыз табиғат (Абиотикалық)</td>
+                  <td class="p-3">Үлескі таңдалды; термометрмен ауа температурасы (+19°C), ылғалдылық, ауа тазалығы, топырақ түсі (қара-қоңыр) мен саздақ құрылымы анықталды.</td>
+                  <td class="p-3 text-center" id="rep-sim-1">❌</td>
+                  <td class="p-3 text-center font-bold" id="rep-score-1">0 / 4</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold">3-қадам: Жанды табиғат (Биотикалық)</td>
+                  <td class="p-3">4 өсімдік түрі саналды; сызғышпен биіктіктері өлшенді (Жусан 52 см, Жолжелкен 28 см, Бақбақ 18 см, Беде 8 см); көбелек, қанқыз, құмырсқа бақыланды.</td>
+                  <td class="p-3 text-center" id="rep-sim-2">❌</td>
+                  <td class="p-3 text-center font-bold" id="rep-score-2">0 / 4</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold">4-қадам: Топырақты лупамен зерттеу</td>
+                  <td class="p-3">Топырақ беті (қураған жапырақ, құмырсқа) және үшкір таяқшамен қазылған ішкі қабаты (ылғалды қарашірік, тамыр, жауын құрты) лупамен салыстырылды.</td>
+                  <td class="p-3 text-center" id="rep-sim-3">❌</td>
+                  <td class="p-3 text-center font-bold" id="rep-score-3">0 / 4</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold">5–6 қадам: Экожүйе типі мен байланысы</td>
+                  <td class="p-3">Мектеп ауласы — жасанды экожүйе (суарылады, тыңайтылады, мәдени өсімдіктер өсіріледі). Барлық құрамбөліктер өзара тығыз байланысты.</td>
+                  <td class="p-3 text-center" id="rep-sim-4">❌</td>
+                  <td class="p-3 text-center font-bold" id="rep-score-4">0 / 4</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Оқушының жалпы қорытындысы -->
+        <div class="mb-6">
+          <label for="final-conclusion" class="block font-bold text-slate-800 text-base mb-2">
+            📝 Жалпы қорытынды (Экожүйе құрамбөліктерінің өзара байланысы туралы қорытынды жазыңыз):
+          </label>
+          <textarea id="final-conclusion" rows="3"
+            placeholder="Мысалы: Мен мектеп ауласы мысалында экожүйенің жансыз (абиотикалық) және жанды (биотикалық) құрамбөліктерін зерттеуді үйрендім. Олардың барлығы бір-бірімен тығыз байланысты, біреуі жойылса экожүйе тепе-теңдігі бұзылады..."
+            class="w-full p-3.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+        </div>
+
+        <!-- Бағалау батырмалары -->
+        <div class="flex flex-wrap items-center gap-3 mb-6 no-print">
+          <button onclick="evaluateFinalWork()"
+            class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-sm sm:text-base shadow-md transition flex items-center gap-2">
+            <span>🎓 Жұмысты тексеру және Бағалау</span>
+          </button>
+
+          <button onclick="window.print()" id="btn-print" class="hidden px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm shadow-sm transition flex items-center gap-2">
+            <span>🖨 Басып шығару / PDF сақтау</span>
+          </button>
+
+          <button onclick="copyReportToClipboard()" id="btn-copy" class="hidden px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition flex items-center gap-2">
+            <span>📋 Нәтижені мұғалімге жіберу үшін көшіру</span>
+          </button>
+        </div>
+
+        <!-- Мұғалімге арналған ресми бағалау карточкасы -->
+        <div id="grading-result-box" class="hidden rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 p-5 sm:p-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-emerald-200 pb-4 mb-4">
+            <div>
+              <span class="inline-block bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-1">
+                Мұғалімге тексеру нәтижесі
+              </span>
+              <h3 class="text-xl font-extrabold text-slate-900" id="grade-verdict">Бағалау нәтижесі</h3>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="bg-white px-4 py-2.5 rounded-xl border border-emerald-200 text-center shadow-sm">
+                <span class="text-[11px] uppercase font-bold text-slate-500 block">Жалпы ұпай</span>
+                <span id="grade-raw-score" class="text-2xl font-black text-emerald-700">0 / 20</span>
+              </div>
+              <div class="bg-white px-4 py-2.5 rounded-xl border border-emerald-200 text-center shadow-sm">
+                <span class="text-[11px] uppercase font-bold text-slate-500 block">10 балдық баға</span>
+                <span id="grade-ten-scale" class="text-2xl font-black text-teal-600">0 / 10</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Оқушы жазған ашық жауаптар тізімі -->
+          <div class="space-y-2 text-xs sm:text-sm text-slate-700">
+            <p class="font-bold text-slate-900">📌 Оқушының жазбаша бақылаулары (Мұғалім тексерісі үшін):</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <strong class="text-emerald-800">1–2 қадам (Жансыз табиғат):</strong>
+                <p id="rep-ans-1" class="text-slate-600 mt-0.5 italic">—</p>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <strong class="text-emerald-800">3-қадам (Жанды табиғат):</strong>
+                <p id="rep-ans-2" class="text-slate-600 mt-0.5 italic">—</p>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <strong class="text-emerald-800">4-қадам (Топырақты лупамен қарау):</strong>
+                <p id="rep-ans-3" class="text-slate-600 mt-0.5 italic">—</p>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <strong class="text-emerald-800">5–6 қадам (Жасанды/Табиғи):</strong>
+                <p id="rep-ans-4" class="text-slate-600 mt-0.5 italic">—</p>
+              </div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200 mt-2">
+              <strong class="text-teal-800">Жалпы қорытынды:</strong>
+              <p id="rep-ans-final" class="text-slate-700 mt-0.5">—</p>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-3 border-t border-emerald-200 flex flex-wrap justify-between items-center text-xs text-slate-600">
+            <span>Тексеру коды: <strong id="verification-code" class="font-mono text-slate-900">BIO7-LAB1-XXXX</strong></span>
+            <span>Пән мұғалімінің қолы: ______________________</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-emerald-200 py-4 text-center text-xs text-slate-500 no-print">
+    7-сынып Биология • №1 зертханалық жұмыс виртуалды симуляторы • Оқу бағдарламасына сәйкес әзірленген
+  </footer>
+
+  <script>
+    // Жалпы зертхана күйі
+    const labState = {
+      plotType: 'garden',
+      step1: { tempMeasured: false, soilInspected: false, completed: false, score: 0 },
+      step2: { rulerUsed: false, animalsObserved: false, completed: false, score: 0 },
+      step3: { surfaceLooked: false, dugLooked: false, completed: false, score: 0 },
+      step4: { impactTested: false, completed: false, score: 0 },
+      reportCompleted: false
+    };
+
+    document.getElementById('rep-date').textContent = new Date().toLocaleDateString('kk-KZ');
+
+    function showToast(msg, icon = '🌿') {
+      const box = document.getElementById('toast-box');
+      document.getElementById('toast-message').textContent = msg;
+      document.getElementById('toast-icon').textContent = icon;
+      box.classList.remove('hidden');
+      clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => box.classList.add('hidden'), 3600);
+    }
+
+    function switchTab(tabNum) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-600', 'text-white', 'shadow-sm');
+        if (!btn.id.includes('5')) {
+          btn.classList.add('bg-slate-100', 'text-slate-700');
+        }
+      });
+
+      if (tabNum === 5) {
+        document.getElementById('tab-report').classList.remove('hidden');
+        updateReportPreview();
+      } else {
+        document.getElementById(`tab-${tabNum}`).classList.remove('hidden');
+      }
+
+      const activeBtn = document.getElementById(`tab-btn-${tabNum}`);
+      activeBtn.classList.remove('bg-slate-100', 'text-slate-700', 'bg-amber-50', 'text-amber-800');
+      activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow-sm');
+    }
+
+    function updateProgress() {
+      let count = 0;
+      if (labState.step1.completed) { count++; document.getElementById('badge-1').className = 'w-2.5 h-2.5 rounded-full bg-emerald-300'; }
+      if (labState.step2.completed) { count++; document.getElementById('badge-2').className = 'w-2.5 h-2.5 rounded-full bg-emerald-300'; }
+      if (labState.step3.completed) { count++; document.getElementById('badge-3').className = 'w-2.5 h-2.5 rounded-full bg-emerald-300'; }
+      if (labState.step4.completed) { count++; document.getElementById('badge-4').className = 'w-2.5 h-2.5 rounded-full bg-emerald-300'; }
+      if (labState.reportCompleted) { count++; document.getElementById('badge-5').className = 'w-2.5 h-2.5 rounded-full bg-emerald-300'; }
+
+      document.getElementById('progress-text').textContent = `${count} / 5 бөлім`;
+      document.getElementById('progress-bar').style.width = `${(count / 5) * 100}%`;
+    }
+
+    /* ================= 1–2 ҚАДАМ ЛОГИКАСЫ ================= */
+    function selectPlot(type) {
+      labState.plotType = type;
+      const btnG = document.getElementById('btn-plot-garden');
+      const btnM = document.getElementById('btn-plot-meadow');
+      const tree = document.getElementById('plot1-tree');
+
+      if (type === 'garden') {
+        btnG.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-sm transition';
+        btnM.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 transition';
+        tree.setAttribute('opacity', '1');
+        document.getElementById('therm-val').textContent = '+19°C';
+        document.getElementById('read-temp').textContent = '+19°C (ағаш көлеңкесінде қоңыржай)';
+        document.getElementById('read-hum').textContent = '62% (таңғы шық ізі бар)';
+        document.getElementById('read-soil-color').textContent = 'Қара-қоңыр (қарашірік мол)';
+        document.getElementById('read-soil-struct').textContent = 'Саздақ, ылғалды';
+        document.getElementById('soil-probe-text1').textContent = 'Топырақ: Қара-қоңыр';
+        document.getElementById('soil-probe-text2').textContent = 'Құрылымы: Саздақ, ылғалды';
+      } else {
+        btnM.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-sm transition';
+        btnG.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 transition';
+        tree.setAttribute('opacity', '0');
+        document.getElementById('therm-val').textContent = '+23°C';
+        document.getElementById('read-temp').textContent = '+23°C (ашық күн астында)';
+        document.getElementById('read-hum').textContent = '48% (құрғақтау)';
+        document.getElementById('read-soil-color').textContent = 'Ашық-қоңыр';
+        document.getElementById('read-soil-struct').textContent = 'Құмайт-саздақ';
+        document.getElementById('soil-probe-text1').textContent = 'Топырақ: Ашық-қоңыр';
+        document.getElementById('soil-probe-text2').textContent = 'Құрылымы: Құмайт-саздақ';
+      }
+    }
+
+    function measureAirTemp() {
+      labState.step1.tempMeasured = true;
+      document.getElementById('tool-thermometer').setAttribute('opacity', '1');
+      document.getElementById('abiotic-readout').classList.remove('hidden');
+      selectPlot(labState.plotType);
+      checkStep1SimComplete();
+      showToast('Ауа термометрімен температура мен ылғалдылық өлшенді!', '🌡️');
+    }
+
+    function inspectSoilType() {
+      labState.step1.soilInspected = true;
+      document.getElementById('tool-soil-probe').setAttribute('opacity', '1');
+      document.getElementById('abiotic-readout').classList.remove('hidden');
+      selectPlot(labState.plotType);
+      checkStep1SimComplete();
+      showToast('Топырақ түсі мен құрылымы анықталды!', '🧪');
+    }
+
+    function checkStep1SimComplete() {
+      if (labState.step1.tempMeasured && labState.step1.soilInspected) {
+        document.getElementById('step1-sim-status').textContent = '✅ Аспаптармен өлшенді';
+        document.getElementById('step1-sim-status').className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800';
+      }
+    }
+
+    function saveStep1() {
+      if (!labState.step1.tempMeasured || !labState.step1.soilInspected) {
+        showToast('Алдымен ауа термометрі мен топырақ құрылымы батырмаларын басыңыз!', '⚠️');
+        return;
+      }
+      const a1 = document.getElementById('q1-1').value;
+      const a2 = document.getElementById('q1-2').value;
+      const txt = document.getElementById('q1-text').value.trim();
+
+      if (!a1 || !a2) {
+        showToast('Тест сұрақтарының жауабын таңдаңыз!', '⚠️');
+        return;
+      }
+
+      let score = 1;
+      if (a1 === 'abiotic') score += 1.5;
+      if (a2 === 'loam_humus') score += 1;
+      if (txt.length >= 10) score += 0.5;
+      score = Math.min(4, Math.round(score));
+
+      labState.step1.score = score;
+      labState.step1.completed = true;
+      updateProgress();
+
+      const fb = document.getElementById('q1-feedback');
+      fb.textContent = `Сақталды! Ұпай: ${score} / 4`;
+      fb.className = 'text-xs font-bold text-emerald-600';
+      showToast(`1–2 қадам нәтижесі сақталды (${score}/4 ұпай).`, '✅');
+    }
+
+    /* ================= 3-ҚАДАМ ЛОГИКАСЫ ================= */
+    function measurePlantsWithRuler() {
+      labState.step2.rulerUsed = true;
+      document.getElementById('ruler-lines').setAttribute('opacity', '1');
+      document.getElementById('step2-hint').textContent = '📏 Сызғыш өлшемі: Жусан — 52 см (ең биік), Жолжелкен — 28 см (орташа), Бақбақ — 18 см, Беде — 8 см (ең аласа).';
+      checkStep2SimComplete();
+      showToast('Өсімдіктердің биіктігі сызғышпен өлшенді!', '📏');
+    }
+
+    function observeAnimals() {
+      labState.step2.animalsObserved = true;
+      document.getElementById('animals-group').setAttribute('opacity', '1');
+      document.getElementById('step2-hint').textContent = '🦋 Жануарлар бақыланды: Көбелек (тозаңдандырушы), Қанқыз, Құмырсқа.';
+      checkStep2SimComplete();
+      showToast('Экожүйедегі жануарлар анықталды!', '🦋');
+    }
+
+    function checkStep2SimComplete() {
+      if (labState.step2.rulerUsed && labState.step2.animalsObserved) {
+        document.getElementById('step2-sim-status').textContent = '✅ Зерттеу орындалды';
+        document.getElementById('step2-sim-status').className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800';
+      }
+    }
+
+    function saveStep2() {
+      if (!labState.step2.rulerUsed) {
+        showToast('Алдымен сызғышпен өсімдік биіктігін өлшеңіз!', '⚠️');
+        return;
+      }
+      const c = document.getElementById('q2-count').value;
+      const h = document.getElementById('q2-heights').value;
+      const a = document.getElementById('q2-animals').value;
+      const txt = document.getElementById('q2-text').value.trim();
+
+      if (!c || !h || !a) {
+        showToast('Барлық өрістерді таңдаңыз!', '⚠️');
+        return;
+      }
+
+      let score = 1;
+      if (c === '4') score++;
+      if (h === 'correct') score++;
+      if (a === 'consumers') score++;
+      if (txt.length >= 8) score += 0.5;
+      score = Math.min(4, Math.round(score));
+
+      labState.step2.score = score;
+      labState.step2.completed = true;
+      updateProgress();
+
+      const fb = document.getElementById('q2-feedback');
+      fb.textContent = `Сақталды! Ұпай: ${score} / 4`;
+      fb.className = 'text-xs font-bold text-emerald-600';
+      showToast(`3-қадам нәтижесі сақталды (${score}/4 ұпай).`, '✅');
+    }
+
+    /* ================= 4-ҚАДАМ ЛОГИКАСЫ ================= */
+    function inspectSoilSurface() {
+      labState.step3.surfaceLooked = true;
+      document.getElementById('lens-dug-view').setAttribute('opacity', '0');
+      document.getElementById('soil-layer-badge').textContent = 'Қабат: Топырақ беті';
+      document.getElementById('step3-hint').textContent = '🔍 Беткі қабатта құрғақ жапырақтар, ұсақ тастар және құмырсқалар көрінеді.';
+      checkStep3SimComplete();
+    }
+
+    function digAndInspectSoil() {
+      labState.step3.dugLooked = true;
+      document.getElementById('lens-dug-view').setAttribute('opacity', '1');
+      document.getElementById('soil-layer-badge').textContent = 'Қабат: Үшкір таяқшамен қазылған ішкі қабат';
+      document.getElementById('step3-hint').textContent = '🥢 Қазылған қабатта ылғалды қарашірік, өсімдік тамырлары және жауын құрты байқалды!';
+      checkStep3SimComplete();
+      showToast('Үшкір таяқшамен қазылған топырақ лупамен зерттелді!', '🔍');
+    }
+
+    function checkStep3SimComplete() {
+      if (labState.step3.surfaceLooked && labState.step3.dugLooked) {
+        document.getElementById('step3-sim-status').textContent = '✅ Лупамен салыстырылды';
+        document.getElementById('step3-sim-status').className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800';
+      }
+    }
+
+    function saveStep3() {
+      if (!labState.step3.dugLooked) {
+        showToast('Алдымен үшкір таяқшамен топырақты қазып, лупамен қарап көріңіз!', '⚠️');
+        return;
+      }
+      const a1 = document.getElementById('q3-1').value;
+      const a2 = document.getElementById('q3-2').value;
+      const txt = document.getElementById('q3-text').value.trim();
+
+      if (!a1 || !a2) {
+        showToast('Сұрақтардың жауабын таңдаңыз!', '⚠️');
+        return;
+      }
+
+      let score = 1;
+      if (a1 === 'surface_ok') score += 1.5;
+      if (a2 === 'dug_ok') score += 1;
+      if (txt.length >= 10) score += 0.5;
+      score = Math.min(4, Math.round(score));
+
+      labState.step3.score = score;
+      labState.step3.completed = true;
+      updateProgress();
+
+      const fb = document.getElementById('q3-feedback');
+      fb.textContent = `Сақталды! Ұпай: ${score} / 4`;
+      fb.className = 'text-xs font-bold text-emerald-600';
+      showToast(`4-қадам нәтижесі сақталды (${score}/4 ұпай).`, '✅');
+    }
+
+    /* ================= 5–6 ҚАДАМ ЛОГИКАСЫ ================= */
+    function simulateRemoval(comp) {
+      labState.step4.impactTested = true;
+      document.getElementById('step4-sim-status').textContent = '✅ Модель тексерілді';
+      document.getElementById('step4-sim-status').className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800';
+
+      const box = document.getElementById('eco-impact-box');
+      const messages = {
+        plants: {
+          title: '⚠️ Өсімдіктер (продуценттер) жойылса:',
+          desc: 'Фотосинтез тоқтайды, оттегі бөлінбейді. Шөпқоректі жәндіктер (көбелектер) қорексіз қалып, басқа жаққа кетеді немесе жойылады. Топырақ құрғап, эрозияға ұшырайды.'
+        },
+        insects: {
+          title: '⚠️ Жәндіктер (тозаңдандырушылар) жойылса:',
+          desc: 'Гүлді өсімдіктер тозаңданбай, тұқым мен жеміс бермейді. Қанқыз сияқты жыртқыш жәндіктер азайып, зиянкес бітелер көбейіп кетеді.'
+        },
+        worms: {
+          title: '⚠️ Жауын құрты мен бактериялар (редуценттер) жойылса:',
+          desc: 'Қураған жапырақтар мен органикалық қалдықтар шірімей жиналып қалады. Топырақ тығыздалып, қарашірік азаяды да, өсімдіктердің өсуі нашарлайды.'
+        },
+        water: {
+          title: '⚠️ Суару мен ылғал (абиотикалық фактор) тоқтаса:',
+          desc: 'Мектеп ауласындағы мәдени өсімдіктер қурап қалады, топырақтағы жауын құрттары тереңге кетеді. Жасанды экожүйе адамның күтімінсіз тез бұзылады.'
+        }
+      };
+
+      const item = messages[comp];
+      box.innerHTML = `<p class="text-amber-300 font-bold mb-1">${item.title}</p><p class="text-slate-200">${item.desc}</p>`;
+    }
+
+    function saveStep4() {
+      if (!labState.step4.impactTested) {
+        showToast('Алдымен сол жақтағы экожүйе моделінен кемінде бір құрамбөлікті басып тексеріңіз!', '⚠️');
+        return;
+      }
+      const a1 = document.getElementById('q4-1').value;
+      const a2 = document.getElementById('q4-2').value;
+      const txt = document.getElementById('q4-text').value.trim();
+
+      if (!a1 || !a2) {
+        showToast('Сұрақтардың жауабын таңдаңыз!', '⚠️');
+        return;
+      }
+
+      let score = 1;
+      if (a1 === 'artificial') score += 1.5;
+      if (a2 === 'chain_reaction') score += 1;
+      if (txt.length >= 10) score += 0.5;
+      score = Math.min(4, Math.round(score));
+
+      labState.step4.score = score;
+      labState.step4.completed = true;
+      updateProgress();
+
+      const fb = document.getElementById('q4-feedback');
+      fb.textContent = `Сақталды! Ұпай: ${score} / 4`;
+      fb.className = 'text-xs font-bold text-emerald-600';
+      showToast(`5–6 қадам нәтижесі сақталды (${score}/4 ұпай). Енді қорытынды бөліміне өтіңіз!`, '✅');
+    }
+
+    /* ================= 5-БӨЛІМ: МҰҒАЛІМ ТЕКСЕРІСІ ЖӘНЕ БАҒАЛАУ ================= */
+    function updateReportPreview() {
+      document.getElementById('rep-student-name').textContent = document.getElementById('student-name').value.trim() || 'Көрсетілмеген';
+      document.getElementById('rep-student-class').textContent = document.getElementById('student-class').value.trim() || 'Көрсетілмеген';
+
+      document.getElementById('rep-sim-1').textContent = (labState.step1.tempMeasured && labState.step1.soilInspected) ? '✅ Орындалды' : '❌ Жоқ';
+      document.getElementById('rep-sim-2').textContent = labState.step2.rulerUsed ? '✅ Орындалды' : '❌ Жоқ';
+      document.getElementById('rep-sim-3').textContent = labState.step3.dugLooked ? '✅ Орындалды' : '❌ Жоқ';
+      document.getElementById('rep-sim-4').textContent = labState.step4.impactTested ? '✅ Орындалды' : '❌ Жоқ';
+
+      document.getElementById('rep-score-1').textContent = `${labState.step1.score} / 4`;
+      document.getElementById('rep-score-2').textContent = `${labState.step2.score} / 4`;
+      document.getElementById('rep-score-3').textContent = `${labState.step3.score} / 4`;
+      document.getElementById('rep-score-4').textContent = `${labState.step4.score} / 4`;
+    }
+
+    function evaluateFinalWork() {
+      const sName = document.getElementById('student-name').value.trim();
+      const sClass = document.getElementById('student-class').value.trim();
+      if (!sName || !sClass) {
+        showToast('Жоғарғы өріске оқушының аты-жөні мен сыныбын міндетті түрде жазыңыз!', '⚠️');
+        document.getElementById('student-name').focus();
+        return;
+      }
+
+      const conclusion = document.getElementById('final-conclusion').value.trim();
+      if (conclusion.length < 15) {
+        showToast('Жалпы қорытынды өрісіне кемінде 1-2 сөйлем жазыңыз!', '⚠️');
+        document.getElementById('final-conclusion').focus();
+        return;
+      }
+
+      updateReportPreview();
+
+      // Қорытынды бағалау (4 бөлім * 4 ұпай = 16 ұпай + Жалпы қорытынды 4 ұпай = 20 ұпай)
+      let conclusionScore = 2;
+      const keywords = ['экожүйе', 'жансыз', 'жанды', 'байланыс', 'топырақ', 'өсімдік', 'жануар', 'жасанды', 'абиотикалық', 'биотикалық'];
+      let matched = 0;
+      keywords.forEach(kw => {
+        if (conclusion.toLowerCase().includes(kw)) matched++;
+      });
+      if (matched >= 3) conclusionScore = 4;
+      else if (matched >= 1) conclusionScore = 3;
+
+      const totalRaw = labState.step1.score + labState.step2.score + labState.step3.score + labState.step4.score + conclusionScore;
+      const tenScale = Math.max(1, Math.round((totalRaw / 20) * 10));
+
+      labState.reportCompleted = true;
+      updateProgress();
+
+      let verdict = '';
+      if (tenScale >= 9) verdict = '🌟 Өте жақсы! Мектеп ауласының экожүйесі толық әрі дәл зерттелді.';
+      else if (tenScale >= 7) verdict = '👍 Жақсы нәтиже! Зертханалық жұмыс сәтті орындалды.';
+      else if (tenScale >= 5) verdict = '📘 Қанағаттанарлық. Кейбір қадамдарды қайта тексеру ұсынылады.';
+      else verdict = '⚠️ Зерттеу қадамдары толық орындалмаған. Қайта орындап шығыңыз.';
+
+      document.getElementById('grade-verdict').textContent = verdict;
+      document.getElementById('grade-raw-score').textContent = `${totalRaw} / 20`;
+      document.getElementById('grade-ten-scale').textContent = `${tenScale} / 10`;
+
+      document.getElementById('rep-ans-1').textContent = document.getElementById('q1-text').value.trim() || '(Тест жауабы таңдалды)';
+      document.getElementById('rep-ans-2').textContent = document.getElementById('q2-text').value.trim() || '(Тест жауабы таңдалды)';
+      document.getElementById('rep-ans-3').textContent = document.getElementById('q3-text').value.trim() || '(Тест жауабы таңдалды)';
+      document.getElementById('rep-ans-4').textContent = document.getElementById('q4-text').value.trim() || '(Тест жауабы таңдалды)';
+      document.getElementById('rep-ans-final').textContent = conclusion;
+
+      const hash = Math.abs((sName + sClass + totalRaw).split('').reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0)).toString(16).toUpperCase().slice(0, 6);
+      document.getElementById('verification-code').textContent = `BIO7-LAB1-${totalRaw}P-${hash}`;
+
+      document.getElementById('grading-result-box').classList.remove('hidden');
+      document.getElementById('btn-print').classList.remove('hidden');
+      document.getElementById('btn-copy').classList.remove('hidden');
+
+      showToast(`Жұмыс тексерілді! Бағаңыз: ${tenScale} / 10 балл`, '🎓');
+    }
+
+    function copyReportToClipboard() {
+      const sName = document.getElementById('student-name').value.trim();
+      const sClass = document.getElementById('student-class').value.trim();
+      const raw = document.getElementById('grade-raw-score').textContent;
+      const ten = document.getElementById('grade-ten-scale').textContent;
+      const code = document.getElementById('verification-code').textContent;
+      const conclusion = document.getElementById('final-conclusion').value.trim();
+
+      const reportText =
+`7-СЫНЫП БИОЛОГИЯ | №1 ЗЕРТХАНАЛЫҚ ЖҰМЫС
+Тақырыбы: Жергілікті жердің экожүйесін зерттеу (мектеп ауласы мысалында)
+Оқушы: ${sName} (${sClass})
+Күні: ${document.getElementById('rep-date').textContent}
+---------------------------------------
+1–2 қадам (Жансыз табиғат): ${labState.step1.score}/4 ұпай
+3-қадам (Жанды табиғат & Өлшеу): ${labState.step2.score}/4 ұпай
+4-қадам (Топырақты лупамен зерттеу): ${labState.step3.score}/4 ұпай
+5–6 қадам (Жасанды/Табиғи экожүйе): ${labState.step4.score}/4 ұпай
+Жалпы ұпай: ${raw} | Баға: ${ten} балл
+Қорытынды: ${conclusion}
+Тексеру коды: ${code}`;
+
+      const tempArea = document.createElement('textarea');
+      tempArea.value = reportText;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempArea);
+
+      showToast('Хаттама мәтіні алмасу буферіне көшірілді! Мұғалімге жібере аласыз.', '📋');
+    }
+  </script>
+</body>
+</html>
